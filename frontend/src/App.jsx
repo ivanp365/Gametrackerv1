@@ -6,6 +6,8 @@ import Juegos from './pages/Juegos'
 import Tickets from './pages/Tickets'
 import Favoritos from './pages/Favoritos'
 import ProtectedRoute from './components/ProtectedRoute'
+import Admin from './pages/Admin'
+
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/juegos" element={<ProtectedRoute><Juegos /></ProtectedRoute>} />
         <Route path="/tickets" element={<ProtectedRoute><Tickets /></ProtectedRoute>} />
         <Route path="/favoritos" element={<ProtectedRoute><Favoritos /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+
       </Routes>
     </BrowserRouter>
   )

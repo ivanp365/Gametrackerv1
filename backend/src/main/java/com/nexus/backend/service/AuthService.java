@@ -63,17 +63,20 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+    try {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 )
         );
-
         String username = authentication.getName();
         String role = authentication.getAuthorities().iterator().next().getAuthority();
         String token = jwtUtils.generateToken(username);
-
         return new AuthResponse(token, username, role);
+    } catch (Exception e) {
+        System.out.println("ERROR LOGIN: " + e.getMessage());
+        throw e;
     }
+}
 }

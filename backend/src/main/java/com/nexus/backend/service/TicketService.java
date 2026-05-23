@@ -43,8 +43,22 @@ public class TicketService {
         ticket.setCategoria(ticketActualizado.getCategoria());
         return ticketRepository.save(ticket);
     }
+    public Ticket cambiarEstado(Long id, String estado) {
+    Ticket ticket = ticketRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+    ticket.setEstado(Ticket.Estado.valueOf(estado));
+    return ticketRepository.save(ticket);
+}
+public Ticket responder(Long id, String respuesta, String estado) {
+    Ticket ticket = ticketRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+    ticket.setRespuesta(respuesta);
+    ticket.setEstado(Ticket.Estado.valueOf(estado));
+    return ticketRepository.save(ticket);
+}
 
     public void eliminar(Long id) {
         ticketRepository.deleteById(id);
+        
     }
 }

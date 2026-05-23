@@ -190,6 +190,13 @@ export default function Tickets() {
                       </span>
                     </div>
                     <p className="text-gray-400 text-sm">{ticket.descripcion}</p>
+
+{ticket.respuesta && (
+  <div className="mt-3 bg-purple-600/10 border border-purple-500/30 rounded-lg p-3">
+    <p className="text-purple-400 text-xs font-semibold mb-1">💬 Respuesta del equipo:</p>
+    <p className="text-gray-300 text-sm">{ticket.respuesta}</p>
+  </div>
+)}
                     <p className="text-gray-600 text-xs mt-2">
                       {ticket.categoria && `📁 ${ticket.categoria} • `}
                       👤 {ticket.usuario?.username}

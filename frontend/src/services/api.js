@@ -22,6 +22,7 @@ export const ticketService = {
   crear: (data) => api.post('/tickets', data),
   actualizar: (id, data) => api.put(`/tickets/${id}`, data),
   eliminar: (id) => api.delete(`/tickets/${id}`),
-}
+  cambiarEstado: (id, estado) => api.patch(`/tickets/${id}/estado?estado=${estado}`),
+responder: (id, respuesta, estado) => api.put(`/tickets/${id}/responder?respuesta=${encodeURIComponent(respuesta)}&estado=${estado}`),}
 
 export default api

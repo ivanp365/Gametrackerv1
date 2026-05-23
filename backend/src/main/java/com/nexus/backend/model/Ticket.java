@@ -33,6 +33,8 @@ public class Ticket {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(length = 1000)
+private String respuesta;
 
     public enum Prioridad {
         BAJA, MEDIA, ALTA, CRITICA
