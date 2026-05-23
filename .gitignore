@@ -1,0 +1,15 @@
+# Backend
+backend/target/
+backend/.mvn/
+*.class
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Credenciales
+backend/src/main/resources/application.properties
+
+# OS
+.DS_Store
+Thumbs.db
