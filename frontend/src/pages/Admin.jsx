@@ -10,7 +10,7 @@ function ResponderTicket({ ticket, onResponder }) {
   const [loading, setLoading] = useState(false)
 
   const handleResponder = async () => {
-    setLoading(true)
+    setLoading(true) 
     try {
       await ticketService.responder(ticket.id, respuesta, estado)
       setOpen(false)
