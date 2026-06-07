@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { ticketService } from '../services/api'
+import toast from 'react-hot-toast'
 
 function ResponderTicket({ ticket, onResponder }) {
   const [open, setOpen] = useState(false)
@@ -10,17 +11,18 @@ function ResponderTicket({ ticket, onResponder }) {
   const [loading, setLoading] = useState(false)
 
   const handleResponder = async () => {
-    setLoading(true) 
-    try {
-      await ticketService.responder(ticket.id, respuesta, estado)
-      setOpen(false)
-      onResponder()
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
+  setLoading(true)
+  try {
+    await ticketService.responder(ticket.id, respuesta, estado)
+    setOpen(false)
+    onResponder()
+    toast.success('💬 Respuesta enviada exitosamente')
+  } catch (err) {
+    toast.error('❌ Error al enviar respuesta')
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <div>

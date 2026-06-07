@@ -16,11 +16,16 @@ public class TicketController {
     @Autowired
     private TicketService ticketService;
 
-    @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT', 'USER')")
-    public ResponseEntity<List<Ticket>> listarTodos() {
+  @GetMapping
+@PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT', 'USER')")
+public ResponseEntity<List<Ticket>> listarTodos(Authentication authentication) {
+    String role = authentication.getAuthorities().iterator().next().getAuthority();
+    if (role.equals("ROLE_ADMIN") || role.equals("ROLE_SUPPORT")) {
         return ResponseEntity.ok(ticketService.listarTodos());
+    } else {
+        return ResponseEntity.ok(ticketService.listarPorUsername(authentication.getName()));
     }
+}
 
     @GetMapping("/usuario/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT', 'USER')")
@@ -56,8 +61,8 @@ public class TicketController {
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{id}/responder")
-@PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT')")
-public ResponseEntity<Ticket> responder(
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT')")
+    public ResponseEntity<Ticket> responder(
         @PathVariable Long id,
         @RequestParam String respuesta,
         @RequestParam String estado) {

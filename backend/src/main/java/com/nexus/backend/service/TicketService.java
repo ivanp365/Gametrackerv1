@@ -61,4 +61,9 @@ public Ticket responder(Long id, String respuesta, String estado) {
         ticketRepository.deleteById(id);
         
     }
+    public List<Ticket> listarPorUsername(String username) {
+    User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    return ticketRepository.findByUsuarioId(user.getId());
+}
 }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { authService } from '../services/api'
+import toast from 'react-hot-toast'
 
 export default function Login() {
   const [form, setForm] = useState({ username: '', password: '' })
@@ -15,20 +16,21 @@ export default function Login() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-    try {
-      const res = await authService.login(form)
-      login(res.data)
-      navigate('/dashboard')
-    } catch (err) {
-      setError('Usuario o contraseña incorrectos')
-    } finally {
-      setLoading(false)
-    }
+  e.preventDefault()
+  setLoading(true)
+  setError('')
+  try {
+    const res = await authService.login(form)
+    login(res.data)
+    toast.success(`👋 Bienvenido, ${res.data.username}!`)
+    navigate('/dashboard')
+  } catch (err) {
+    toast.error('❌ Usuario o contraseña incorrectos')
+    setError('Usuario o contraseña incorrectos')
+  } finally {
+    setLoading(false)
   }
-
+}
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center">
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 w-full max-w-md shadow-2xl">

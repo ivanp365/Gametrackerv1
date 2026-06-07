@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { ticketService } from '../services/api'
-
+import toast from 'react-hot-toast'
 export default function Tickets() {
   const [tickets, setTickets] = useState([])
   const [loading, setLoading] = useState(true)
@@ -25,24 +25,25 @@ export default function Tickets() {
   useEffect(() => { cargarTickets() }, [])
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    try {
-      await ticketService.crear(form)
-      setForm({ titulo: '', descripcion: '', prioridad: 'MEDIA', categoria: '' })
-      setShowForm(false)
-      cargarTickets()
-    } catch (err) {
-      console.error(err)
-    }
+  e.preventDefault()
+  try {
+    await ticketService.crear(form)
+    setForm({ titulo: '', descripcion: '', prioridad: 'MEDIA', categoria: '' })
+    setShowForm(false)
+    cargarTickets()
+    toast.success('✅ Ticket creado exitosamente')
+  } catch (err) {
+    toast.error('❌ Error al crear el ticket')
   }
+}
 
-  const handleEliminar = async (id) => {
-    if (confirm('¿Eliminar este ticket?')) {
-      await ticketService.eliminar(id)
-      cargarTickets()
-    }
+ const handleEliminar = async (id) => {
+  if (confirm('¿Eliminar este ticket?')) {
+    await ticketService.eliminar(id)
+    cargarTickets()
+    toast.success('🗑️ Ticket eliminado')
   }
-
+}
   const handleLogout = () => { logout(); navigate('/login') }
 
   const coloresPrioridad = {
