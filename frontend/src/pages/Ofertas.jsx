@@ -24,8 +24,6 @@ export default function Ofertas() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
-  const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]')
-
   useEffect(() => {
     fetchOfertas()
   }, [])
@@ -41,7 +39,7 @@ export default function Ofertas() {
       setOfertas(data)
     } catch (err) {
       console.error(err)
-    } finally { // <-- CORREGIDO: Quita el "window." de aquí
+    } finally {
       setLoading(false)
     }
   }
@@ -54,9 +52,7 @@ export default function Ofertas() {
       const res = await fetch(`https://www.cheapshark.com/api/1.0/games?id=${oferta.gameID}`)
       const data = await res.json()
 
-      // CORRECCIÓN: Extraer el título real del juego desde la respuesta detallada
       const tituloReal = data.info?.title || oferta.title || 'Juego Desconocido'
-
       const precioActual = parseFloat(oferta.salePrice)
       const precioNormal = parseFloat(oferta.normalPrice)
       const precioMinimo = parseFloat(data.cheapestPrice?.price) || parseFloat(data.cheapest) || precioActual
@@ -102,7 +98,7 @@ export default function Ofertas() {
         }))
 
       setAnalisis({
-        titulo: tituloReal, // Guardamos el nombre correcto aquí
+        titulo: tituloReal,
         precioActual,
         precioNormal,
         precioMinimo,
@@ -119,6 +115,35 @@ export default function Ofertas() {
     } finally {
       setLoadingAnalisis(false)
     }
+  }
+
+  const agregarWishlist = () => {
+    if (!analisis || !juegoSeleccionado) return
+
+    const wishlist = JSON.parse(
+      localStorage.getItem(`wishlist_${user?.username || 'invitado'}`) || '[]'
+    )
+
+    const existe = wishlist.find(item => item.titulo === analisis.titulo)
+
+    if (existe) {
+      alert('Ya está en tu lista de deseos')
+      return
+    }
+
+    wishlist.push({
+      gameID: juegoSeleccionado.gameID,
+      titulo: analisis.titulo,
+      precioGuardado: analisis.precioActual,
+      fechaGuardado: new Date().toISOString()
+    })
+
+    localStorage.setItem(
+      `wishlist_${user?.username || 'invitado'}`,
+      JSON.stringify(wishlist)
+    )
+
+    alert('Juego agregado a Lista de Deseos 💝')
   }
 
   const ofertasPersonalizadas = ofertas.filter(o =>
@@ -141,6 +166,13 @@ export default function Ofertas() {
           <a href="/joyas" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">💎 Joyas Ocultas</a>
           <a href="/ofertas" className="flex items-center gap-3 text-white bg-purple-600/20 border border-purple-500/30 rounded-lg px-4 py-3 text-sm">🔥 Ofertas</a>
           <a href="/tickets" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">🎫 Mis Tickets</a>
+         
+          <a
+    href="/wishlist"
+    className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition"
+  >
+    💝 Lista de Deseos
+  </a>
           <a href="/favoritos" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">⭐ Favoritos</a>
           {user?.role === 'ROLE_ADMIN' && (
             <a href="/admin" className="flex items-center gap-3 text-red-400 hover:text-white hover:bg-red-400/10 rounded-lg px-4 py-3 text-sm transition">⚙️ Panel Admin</a>
@@ -273,7 +305,6 @@ export default function Ofertas() {
               </div>
             ) : analisis ? (
               <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
-                {/* CORRECCIÓN: Ahora lee el título real formateado */}
                 <h4 className="text-white font-bold text-lg">{analisis.titulo}</h4>
                 
                 {/* Recomendacion principal */}
@@ -288,6 +319,14 @@ export default function Ofertas() {
                   }`}>{analisis.emoji} {analisis.color === 'green' ? '¡Cómpralo ahora!' : analisis.color === 'yellow' ? 'Podrías esperar' : 'Espera mejor oferta'}</p>
                   <p className="text-gray-300 text-sm">{analisis.recomendacion}</p>
                 </div>
+
+                {/* BOTÓN WISHLIST INTELIGENTE */}
+                <button
+                  onClick={agregarWishlist}
+                  className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg transition font-medium flex items-center justify-center gap-2"
+                >
+                  💝 Agregar a Lista de Deseos
+                </button>
 
                 {/* Precios */}
                 <div className="grid grid-cols-3 gap-3">

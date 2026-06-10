@@ -10,15 +10,30 @@ const ESTADOS = {
 }
 
 export default function Biblioteca() {
-  const [biblioteca, setBiblioteca] = useState(() => {
-    return JSON.parse(localStorage.getItem('biblioteca') || '{}')
-  })
-  const [favoritos] = useState(() => {
-    return JSON.parse(localStorage.getItem('favoritos') || '[]')
-  })
+  const [biblioteca, setBiblioteca] = useState({})
+const [favoritos, setFavoritos] = useState([])
   const [filtro, setFiltro] = useState('todos')
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  useEffect(() => {
+  if (!user?.username) return
+
+  const bibliotecaGuardada = JSON.parse(
+    localStorage.getItem(
+      `biblioteca_${user.username}`
+    ) || '{}'
+  )
+
+  const favoritosGuardados = JSON.parse(
+    localStorage.getItem(
+      `favoritos_${user.username}`
+    ) || '[]'
+  )
+
+  setBiblioteca(bibliotecaGuardada)
+  setFavoritos(favoritosGuardados)
+
+}, [user])
 
   const handleLogout = () => { logout(); navigate('/login') }
 
@@ -30,8 +45,10 @@ export default function Biblioteca() {
       nueva[juegoId] = estado
     }
     setBiblioteca(nueva)
-    localStorage.setItem('biblioteca', JSON.stringify(nueva))
-  }
+localStorage.setItem(
+  `biblioteca_${user.username}`,
+  JSON.stringify(nueva)
+)  }
 
   const juegosFiltrados = favoritos.filter(j => {
     if (filtro === 'todos') return true
@@ -66,6 +83,12 @@ export default function Biblioteca() {
           <a href="/ofertas" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">🔥 Ofertas</a>
           <a href="/biblioteca" className="flex items-center gap-3 text-white bg-purple-600/20 border border-purple-500/30 rounded-lg px-4 py-3 text-sm">📚 Mi Biblioteca</a>
           <a href="/tickets" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">🎫 Mis Tickets</a>
+         <a
+    href="/wishlist"
+    className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition"
+  >
+    💝 Lista de Deseos
+  </a>
           <a href="/favoritos" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">⭐ Favoritos</a>
           {user?.role === 'ROLE_ADMIN' && (
             <a href="/admin" className="flex items-center gap-3 text-red-400 hover:text-white hover:bg-red-400/10 rounded-lg px-4 py-3 text-sm transition">⚙️ Panel Admin</a>

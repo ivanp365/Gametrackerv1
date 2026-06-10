@@ -10,7 +10,7 @@ import Admin from './pages/Admin'
 import JoyasOcultas from './pages/JoyasOcultas'
 import Ofertas from './pages/Ofertas'
 import Biblioteca from './pages/Biblioteca'
-
+import Wishlist from './pages/Wishlist'
 
 function App() {
   return (
@@ -27,6 +27,10 @@ function App() {
         <Route path="/joyas" element={<ProtectedRoute><JoyasOcultas /></ProtectedRoute>} /> 
         <Route path="/ofertas" element={<ProtectedRoute><Ofertas /></ProtectedRoute>} />
         <Route path="/biblioteca" element={<ProtectedRoute><Biblioteca /></ProtectedRoute>} />
+        <Route
+  path="/wishlist"
+  element={<Wishlist />}
+/>
 
 
       </Routes>
