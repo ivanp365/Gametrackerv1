@@ -9,16 +9,17 @@ export default function Dashboard() {
   const [tickets, setTickets] = useState([])
   const [favoritos, setFavoritos] = useState([])
 
-  useEffect(() => {
-    const favs = JSON.parse(localStorage.getItem('favoritos') || '[]')
-    setFavoritos(favs)
-    ticketService.listar().then(res => setTickets(res.data)).catch(() => {})
-  }, [])
-
+useEffect(() => {
+  const favs = JSON.parse(localStorage.getItem('favoritos') || '[]')
+  setFavoritos(favs)
+  ticketService.listar().then(res => setTickets(res.data)).catch(() => {})
+}, [])
   const handleLogout = () => { logout(); navigate('/login') }
 
-  const ticketsAbiertos = tickets.filter(t => t.estado === 'ABIERTO').length
-
+const ticketsAbiertos = tickets.filter(t => t.estado === 'ABIERTO').length
+const ticketsEnProgreso = tickets.filter(t => t.estado === 'EN_PROGRESO').length
+const ticketsResueltos = tickets.filter(t => t.estado === 'RESUELTO').length
+const ticketsCerrados = tickets.filter(t => t.estado === 'CERRADO').length
   return (
     <div className="min-h-screen bg-gray-950 flex">
 
@@ -29,8 +30,10 @@ export default function Dashboard() {
           <p className="text-gray-500 text-xs mt-1">Game Tracker</p>
         </div>
         <nav className="flex-1 p-4 space-y-1">
-  <a href="/dashboard" className="flex items-center gap-3 text-white bg-purple-600/20 border border-purple-500/30 rounded-lg px-4 py-3 text-sm">🎮 Dashboard</a>
-  <a href="/juegos" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">🕹️ Explorar Juegos</a>
+<a href="/dashboard" className="flex items-center gap-3 text-white bg-purple-600/20 border border-purple-500/30 rounded-lg px-4 py-3 text-sm">🎮 Dashboard</a>  <a href="/juegos" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">🕹️ Explorar Juegos</a>
+  <a href="/joyas" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">💎 Joyas Ocultas</a>
+  <a href="/ofertas" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">🔥 Ofertas</a>
+  <a href="/biblioteca" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">📚 Mi Biblioteca</a>
   <a href="/tickets" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">🎫 Mis Tickets</a>
   <a href="/favoritos" className="flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-4 py-3 text-sm transition">⭐ Favoritos</a>
   {user?.role === 'ROLE_ADMIN' && (
@@ -60,25 +63,49 @@ export default function Dashboard() {
           <p className="text-gray-400 mt-1">Este es tu panel de control</p>
         </div>
 
-        {/* Cards con datos reales */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-            <p className="text-gray-400 text-sm">Juegos Favoritos</p>
-            <p className="text-3xl font-bold text-white mt-2">{favoritos.length}</p>
-            <p className="text-purple-400 text-xs mt-1">⭐ En tu biblioteca</p>
-          </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-            <p className="text-gray-400 text-sm">Tickets Abiertos</p>
-            <p className="text-3xl font-bold text-white mt-2">{ticketsAbiertos}</p>
-            <p className="text-yellow-400 text-xs mt-1">🎫 Sin resolver</p>
-          </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-            <p className="text-gray-400 text-sm">Tu Rol</p>
-            <p className="text-xl font-bold text-purple-400 mt-2">{user?.role}</p>
-            <p className="text-gray-500 text-xs mt-1">🔐 Acceso actual</p>
-          </div>
-        </div>
-
+       {/* Cards con datos reales */}
+{user?.role === 'ROLE_ADMIN' ? (
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      <p className="text-gray-400 text-sm">Juegos Favoritos</p>
+      <p className="text-3xl font-bold text-white mt-2">{favoritos.length}</p>
+      <p className="text-purple-400 text-xs mt-1">⭐ En tu biblioteca</p>
+    </div>
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      <p className="text-gray-400 text-sm">Tickets Abiertos</p>
+      <p className="text-3xl font-bold text-white mt-2">{ticketsAbiertos}</p>
+      <p className="text-blue-400 text-xs mt-1">🎫 Sin atender</p>
+    </div>
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      <p className="text-gray-400 text-sm">En Progreso</p>
+      <p className="text-3xl font-bold text-white mt-2">{ticketsEnProgreso}</p>
+      <p className="text-yellow-400 text-xs mt-1">⚙️ Siendo atendidos</p>
+    </div>
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      <p className="text-gray-400 text-sm">Resueltos</p>
+      <p className="text-3xl font-bold text-white mt-2">{ticketsResueltos}</p>
+      <p className="text-green-400 text-xs mt-1">✅ Completados</p>
+    </div>
+  </div>
+) : (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      <p className="text-gray-400 text-sm">Mis Favoritos</p>
+      <p className="text-3xl font-bold text-white mt-2">{favoritos.length}</p>
+      <p className="text-purple-400 text-xs mt-1">⭐ En tu biblioteca</p>
+    </div>
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      <p className="text-gray-400 text-sm">Mis Tickets Abiertos</p>
+      <p className="text-3xl font-bold text-white mt-2">{ticketsAbiertos}</p>
+      <p className="text-blue-400 text-xs mt-1">🎫 Esperando respuesta</p>
+    </div>
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      <p className="text-gray-400 text-sm">Tickets Resueltos</p>
+      <p className="text-3xl font-bold text-white mt-2">{ticketsResueltos}</p>
+      <p className="text-green-400 text-xs mt-1">✅ Solucionados</p>
+    </div>
+  </div>
+)}
         {/* Últimos tickets */}
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6">
           <h3 className="text-white font-semibold mb-4">Últimos Tickets</h3>
